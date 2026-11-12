@@ -1,0 +1,70 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:        # Actions 탭에서 수동 실행 가능
+
+permissions:
+  id-token: write           # AWS OIDC 로그인
+  contents: read
+
+concurrency:
+  group: deploy-ec2
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-2
+  SG_ID: sg-0ec40bda9967ab441
+  APP_DIR: /home/ubuntu/app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: AWS 로그인 (OIDC, 액세스 키 없음)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 러너 IP 를 보안그룹 SSH 에 임시 허용
+        run: |
+          IP=$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')
+          echo "RUNNER_IP=$IP" >> "$GITHUB_ENV"
+          aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+            --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=$IP/32,Description=github-actions-temp}]"
+
+      - name: SSH 키 설정
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          for i in 1 2 3 4 5; do ssh-keyscan -4 -T 5 -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null && break; sleep 3; done
+
+      - name: 소스 업로드 (rsync, 서버의 backend/.env 는 유지)
+        run: |
+          rsync -az --delete \
+            --exclude '.git/' --exclude '.github/' \
+            --exclude 'node_modules/' --exclude '.venv/' --exclude 'dist/' --exclude '__pycache__/' \
+            --exclude 'backend/.env' \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            ./ "ubuntu@${{ secrets.EC2_HOST }}:${APP_DIR}/"
+
+      - name: 서버에서 빌드 & 재시작
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "ubuntu@${{ secrets.EC2_HOST }}" \
+            "bash ${APP_DIR}/scripts/deploy.sh"
+
+      - name: 외부에서 헬스체크
+        run: curl -fsS --retry 5 --retry-delay 3 "http://${{ secrets.EC2_HOST }}/api/health"
+
+      - name: 임시 SSH 허용 제거
+        if: always() && env.RUNNER_IP != ''
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id "$SG_ID" \
+            --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=${RUNNER_IP}/32}]"
+          rm -f ~/.ssh/deploy_key
