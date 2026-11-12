@@ -20,7 +20,7 @@ export default function Footer() {
         This product uses the TMDB API but is not endorsed or certified by TMDB.
       </p>
       <p className="footer__copy">
-        Copyright © 2026 TVING Clone Movie Clone Project. All rights reserved.
+        Copyright © 2026 TVING Clone Project. All rights reserved.
       </p>
     </footer>
   );
