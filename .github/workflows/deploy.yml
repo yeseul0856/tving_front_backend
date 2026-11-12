@@ -23,6 +23,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Secrets 확인
+        env:
+          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          missing=0
+          for n in AWS_ROLE_ARN EC2_HOST EC2_SSH_KEY; do
+            if [ -z "${!n}" ]; then echo "::error::Repository secret '$n' 가 비어 있거나 없습니다 (Settings > Secrets and variables > Actions > Secrets 탭)"; missing=1; fi
+          done
+          exit $missing
+
       - uses: actions/checkout@v4
 
       - name: AWS 로그인 (OIDC, 액세스 키 없음)
