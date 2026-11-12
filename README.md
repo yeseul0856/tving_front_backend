@@ -32,6 +32,17 @@ docker compose down            # 중지
 - `frontend` 컨테이너: nginx 가 React 빌드 서빙 + `/api` 를 `backend` 로 프록시 ([frontend/nginx.conf](frontend/nginx.conf))
 - `backend` 컨테이너: uvicorn (외부 포트 미공개), TMDB 키는 `backend/.env` 를 `env_file` 로 주입 (이미지에 포함 X)
 
+## AWS EC2 자동 배포 (GitHub Actions)
+`master` 브랜치에 push 하면 [.github/workflows/deploy.yml](.github/workflows/deploy.yml) 이 실행됩니다.
+
+1. AWS OIDC 로 로그인 (액세스 키 저장 X) → 러너 IP 만 보안그룹 SSH 에 임시 허용
+2. 소스를 EC2 `~/app` 으로 rsync (서버의 `backend/.env` 는 유지)
+3. 서버에서 [scripts/deploy.sh](scripts/deploy.sh) 실행 → `docker compose up -d --build` + 헬스체크
+4. 임시 SSH 허용 제거
+
+필요한 GitHub Secrets: `AWS_ROLE_ARN`, `EC2_HOST`, `EC2_SSH_KEY`
+수동 실행: GitHub → Actions → Deploy to EC2 → Run workflow / 서버에서 `bash ~/app/scripts/deploy.sh`
+
 ## API
 | 경로 | 설명 |
 |---|---|
