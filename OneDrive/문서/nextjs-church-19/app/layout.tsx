@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import localFont from "next/font/local";
+import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const noto = Noto_Sans_KR({
-  variable: "--font-noto-kr",
-  weight: ["400", "500", "600", "700", "800"],
-  preload: false,
+const pretendard = localFont({
+  src: "../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "45 920",
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
-  title: "church19 | 생명사역 공동체",
-  description: "사람을 살리고, 키우고, 고치는 생명사역 공동체 church19",
+  title: "rental house | 숲속 스테이",
+  description: "머무는 시간이 여행이 되는 곳, 숲속 스테이 rental house",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${noto.variable} h-full antialiased`}>
+    <html lang="ko" className={`${pretendard.variable} ${cormorant.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );

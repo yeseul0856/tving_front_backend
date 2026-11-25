@@ -1,27 +1,21 @@
-import Header from "./_components/Header";
-import HeroSlider from "./_components/HeroSlider";
+import Image from "next/image";
+import SiteChrome from "./_components/SiteChrome";
+import HeroCarousel from "./_components/HeroCarousel";
+import RoomSlider from "./_components/RoomSlider";
 import Footer from "./_components/Footer";
+import BookingBar from "./_components/BookingBar";
 import Icon from "./_components/Icon";
-import {
-  education,
-  intro,
-  languages,
-  notices,
-  press,
-  quickLinks,
-  stories,
-  subLinks,
-  videoNews,
-  worshipTimes,
-} from "./_components/data";
+import { facilityImages, img } from "./_components/images";
+import Link from "next/link";
+import { BRAND, facilities, stayInfo } from "./_components/data";
+import NoticeList from "./notices/NoticeList";
+import FaqList from "./faq/FaqList";
 
-function SectionTitle({ title, href = "#", light = false }: { title: string; href?: string; light?: boolean }) {
+function SectionTitle({ en, ko, className = "" }: { en: string; ko: string; className?: string }) {
   return (
-    <div className="mb-6 flex items-end justify-between">
-      <h2 className={`text-xl font-bold lg:text-2xl ${light ? "text-white" : "text-navy"}`}>{title}</h2>
-      <a href={href} aria-label={`${title} 더보기`} className={`grid h-8 w-8 place-items-center rounded-full border transition-colors ${light ? "border-white/30 text-white hover:bg-white/10" : "border-line text-muted hover:border-gold hover:text-gold-dark"}`}>
-        <Icon name="plus" className="h-4 w-4" />
-      </a>
+    <div className={className}>
+      <h2 className="font-serif text-6xl leading-[0.85] text-accent sm:text-8xl lg:text-[9rem]">{en}</h2>
+      <p className="mt-4 pl-1 text-sm tracking-wide text-muted">{ko}</p>
     </div>
   );
 }
@@ -29,223 +23,162 @@ function SectionTitle({ title, href = "#", light = false }: { title: string; hre
 export default function Home() {
   return (
     <>
-      <Header />
+      <SiteChrome />
       <main className="flex-1">
-        <HeroSlider />
+        <HeroCarousel />
 
-        {/* Quick icon tiles */}
-        <section className="relative z-10 mx-auto -mt-6 max-w-7xl px-4 lg:px-6">
-          <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-line sm:grid-cols-6">
-            {quickLinks.map((q) => (
-              <a key={q.label} href="#" className="group flex flex-col items-center gap-2 border-line py-5 text-sm font-medium text-ink transition-colors hover:bg-cream [&:not(:last-child)]:border-r">
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-cream text-navy transition-colors group-hover:bg-navy group-hover:text-gold">
-                  <Icon name={q.icon} className="h-5 w-5" />
-                </span>
-                {q.label}
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* Worship times + feature tiles */}
-        <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 lg:grid-cols-[1fr_2fr] lg:px-6">
-          <div className="rounded-2xl bg-navy p-7 text-white">
-            <p className="text-xs tracking-[0.3em] text-gold">WORSHIP</p>
-            <h2 className="mt-2 text-2xl font-bold">예배안내</h2>
-            <ul className="mt-6 divide-y divide-white/10">
-              {worshipTimes.map((w) => (
-                <li key={w.name} className="flex justify-between py-2.5 text-sm">
-                  <span className="text-white/70">{w.name}</span>
-                  <span className="font-semibold">{w.time}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { t: "church19 TV", e: "Church19 TV", c: "from-[#1d3a6b] to-[#0f1f3d]" },
-              { t: "생명사역 스토리", e: "Life-Giving Ministry", c: "from-[#b08350] to-[#6b4a2f]" },
-              { t: "성경", e: "Bible", c: "from-[#2f6b5a] to-[#1d3d34]" },
-              { t: "경배와 찬양", e: "Praise Worship", c: "from-[#8a5a9a] to-[#4a2f6b]" },
-            ].map((f) => (
-              <a key={f.t} href="#" className={`group relative flex min-h-36 flex-col justify-end overflow-hidden rounded-2xl bg-gradient-to-br ${f.c} p-6 text-white`}>
-                <span className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full bg-white/15 transition-transform group-hover:translate-x-1">
-                  <Icon name="arrow" className="h-4 w-4" />
-                </span>
-                <p className="text-xs uppercase tracking-widest text-white/60">{f.e}</p>
-                <p className="mt-1 text-lg font-bold lg:text-xl">{f.t}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* Stories + Notices */}
-        <section className="bg-cream py-16">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-[2fr_1fr] lg:px-6">
-            <div>
-              <SectionTitle title="생명사역 스토리" />
-              <div className="grid gap-5 sm:grid-cols-3">
-                {stories.map((s) => (
-                  <a key={s.title} href="#" className="group overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:shadow-lg">
-                    <div className={`aspect-[4/3] bg-gradient-to-br ${s.hue} transition-transform duration-500 group-hover:scale-105`} />
-                    <div className="p-5">
-                      <p className="text-xs font-semibold text-gold-dark">{s.sub}</p>
-                      <p className="mt-1 font-bold text-ink">{s.title}</p>
-                      <p className="mt-2 line-clamp-2 text-sm text-muted">{s.excerpt}</p>
-                      <p className="mt-3 text-xs text-muted">{s.date}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div>
-              <SectionTitle title="공지사항" />
-              <ul className="divide-y divide-line rounded-2xl bg-white px-5 ring-1 ring-line">
-                {notices.map((n) => (
-                  <li key={n.title}>
-                    <a href="#" className="flex items-center justify-between gap-4 py-4 text-sm hover:text-gold-dark">
-                      <span className="truncate">{n.title}</span>
-                      <span className="shrink-0 text-xs text-muted">{n.date.slice(5)}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Video news */}
-        <section className="mx-auto max-w-7xl px-4 py-16 lg:px-6">
-          <SectionTitle title="church19 영상뉴스" />
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {videoNews.map((d) => {
-              const [y, m, day] = d.split("-").map(Number);
-              return (
-                <a key={d} href="#" className="group">
-                  <div className="relative aspect-video overflow-hidden rounded-xl bg-gradient-to-br from-navy to-[#3b5f9a]">
-                    <span className="absolute left-3 top-3 rounded bg-gold px-2 py-0.5 text-[10px] font-bold text-navy">NEWS</span>
-                    <span className="absolute inset-0 grid place-items-center">
-                      <span className="grid h-11 w-11 place-items-center rounded-full bg-white/90 text-navy transition-transform group-hover:scale-110">
-                        <Icon name="play" className="ml-0.5 h-5 w-5" />
-                      </span>
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm font-semibold text-ink group-hover:text-gold-dark">
-                    church19 뉴스 {y}년 {m}월 {day}일
-                  </p>
-                </a>
-              );
-            })}
-          </div>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {subLinks.map((l) => (
-              <a key={l} href="#" className="rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink hover:border-navy hover:bg-navy hover:text-white">
-                {l}
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* Press room */}
-        <section className="bg-navy py-16 text-white">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <p className="text-xs tracking-[0.3em] text-gold">PRESS ROOM</p>
-            <div className="mt-2">
-              <SectionTitle title="언론보도" light />
-            </div>
-            <div className="grid gap-8 lg:grid-cols-2">
-              <a href="#" className="group rounded-2xl bg-white/5 p-7 ring-1 ring-white/10 hover:bg-white/10">
-                <p className="text-xs text-gold">{press.headline.date}</p>
-                <p className="mt-2 text-xl font-bold group-hover:text-gold-light">{press.headline.title}</p>
-                <p className="mt-3 text-sm leading-relaxed text-white/70">{press.headline.excerpt}</p>
-                <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold">
-                  전체보기 <Icon name="arrow" className="h-4 w-4" />
-                </span>
-              </a>
-              <ul className="divide-y divide-white/10">
-                {press.list.map((p) => (
-                  <li key={p.title}>
-                    <a href="#" className="flex items-center justify-between gap-4 py-5 hover:text-gold-light">
-                      <span>{p.title}</span>
-                      <span className="shrink-0 text-xs text-white/50">{p.date}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Intro */}
-        <section className="mx-auto max-w-7xl px-4 py-20 text-center lg:px-6">
-          <h2 className="text-2xl font-bold text-navy lg:text-3xl">church19를 소개합니다.</h2>
-          <p className="mt-3 text-muted">생명사역, 교회소개, 섬기는 사람들 등 자세한 안내를 받으실 수 있습니다.</p>
-          <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {intro.map((it) => (
-              <a key={it.label} href="#" className="group rounded-2xl border border-line p-7 transition-all hover:-translate-y-1 hover:border-gold hover:shadow-lg">
-                <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-cream text-navy group-hover:bg-gold group-hover:text-navy">
-                  <Icon name={it.icon} className="h-6 w-6" />
-                </span>
-                <p className="mt-4 font-bold text-ink">{it.label}</p>
-                <p className="mt-1 text-sm text-muted">{it.desc}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* Education */}
-        <section className="bg-cream py-16">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <p className="text-xs tracking-[0.3em] text-gold-dark">EDUCATION</p>
-            <h2 className="mt-2 text-2xl font-bold text-navy">교육·훈련</h2>
-            <p className="mt-2 text-muted">우리는 신앙교육공동체로서 회심한 그리스도인으로 양육하여 생명사역자가 되도록 합니다.</p>
-            <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {education.map((e) => (
-                <a key={e.label} href="#" className="group overflow-hidden rounded-2xl bg-white ring-1 ring-line hover:shadow-lg">
-                  <div className={`h-28 bg-gradient-to-br ${e.hue}`} />
-                  <div className="flex items-center justify-between p-5">
-                    <div>
-                      <p className="font-bold text-ink">{e.label}</p>
-                      <p className="text-xs text-muted">{e.en}</p>
-                    </div>
-                    <Icon name="arrow" className="h-4 w-4 text-muted transition-transform group-hover:translate-x-1 group-hover:text-gold-dark" />
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Mission */}
-        <section className="mx-auto max-w-7xl px-4 py-16 lg:px-6">
-          <p className="text-xs tracking-[0.3em] text-gold-dark">MISSION</p>
-          <h2 className="mt-2 text-2xl font-bold text-navy">선교</h2>
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f1f3d] to-[#2f6b5a] p-8 text-white lg:p-10">
-              <Icon name="globe" className="absolute -bottom-10 -right-10 h-56 w-56 text-white/10" />
-              <p className="text-sm text-gold">church19 세계선교회</p>
-              <p className="mt-3 text-xl font-bold leading-snug lg:text-2xl">
-                “너희는 온 천하에 다니며
-                <br />
-                만민에게 복음을 전파하라”
+        {/* About */}
+        <section id="about" className="px-6 py-28 lg:px-10 lg:py-40">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="font-serif text-3xl leading-snug text-accent lg:text-5xl">
+              For a slow morning
+              <br />
+              and a quiet night in the forest
+            </p>
+            <div className="mt-12 space-y-6 font-serif text-lg leading-relaxed text-ink/80 lg:text-2xl">
+              <p>
+                {BRAND} is a small house hidden among pine trees, two hours from the city.
+                <br className="hidden lg:block" /> Wide windows open onto the forest, and the light changes the room all day long.
               </p>
-              <p className="mt-3 text-sm text-white/70">지역 복음화! 한국 복음화! 세계 선교!</p>
-              <div className="relative mt-8 flex flex-wrap gap-3">
-                <a href="#" className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-navy hover:bg-gold-light">바로가기</a>
-                <a href="#" className="rounded-full border border-white/40 px-5 py-2.5 text-sm font-semibold hover:bg-white/10">선교영상</a>
-              </div>
             </div>
-            <div className="grid gap-3">
-              {languages.map((l) => (
-                <a key={l.label} href="#" className="flex items-center justify-between rounded-2xl border border-line p-5 hover:border-gold">
-                  <div>
-                    <p className="font-bold text-ink">{l.label}</p>
-                    <p className="text-xs text-muted">{l.en} · Part of worship</p>
+            <p className="mt-12 leading-loose text-muted">
+              도시에서 두 시간, 소나무 숲 사이에 숨어 있는 작은 집.
+              <br />
+              큰 창 너머로 숲이 들어오고, 하루 종일 빛이 방 안을 바꿔 놓습니다.
+              <br />
+              아무것도 하지 않아도 괜찮은 하루를 보내세요.
+            </p>
+          </div>
+
+          {/* staggered photos */}
+          <div className="mx-auto mt-24 grid max-w-7xl gap-6 sm:grid-cols-12 lg:mt-32">
+            <div className="relative aspect-[4/5] sm:col-span-5">
+              <Image src={img.heroLiving} alt="큰 창이 있는 밝은 거실" fill placeholder="blur" sizes="(min-width:640px) 42vw, 100vw" className="object-cover" />
+            </div>
+            <div className="flex flex-col justify-end gap-6 sm:col-span-7">
+              <div className="relative aspect-[3/2]">
+                <Image src={img.kitchen} alt="큰 창이 있는 오픈 키친" fill placeholder="blur" sizes="(min-width:640px) 58vw, 100vw" className="object-cover" />
+              </div>
+              <p className="font-serif text-xl italic text-muted lg:text-2xl">— light, wood, and the sound of the forest.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Rooms */}
+        <section id="rooms" className="scroll-mt-0">
+          <div className="flex flex-col gap-6 px-6 pb-12 lg:flex-row lg:items-end lg:justify-between lg:px-10">
+            <SectionTitle en="rooms" ko="객실 안내 — 서로 다른 세 가지 쉼의 방식" />
+            <p className="max-w-sm text-sm leading-relaxed text-muted lg:text-right">
+              모든 객실은 독채로 운영되며, 개별 테라스와 주차 공간이 함께 제공됩니다.
+            </p>
+          </div>
+          <RoomSlider />
+        </section>
+
+        {/* Full-bleed quote */}
+        <section className="relative h-svh min-h-[520px] overflow-hidden">
+          <Image src={img.lake} alt="단풍 든 숲속 호숫가의 작은 오두막" fill placeholder="blur" sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
+            <p className="font-serif text-4xl italic leading-tight lg:text-7xl">
+              stay a little longer,
+              <br />
+              rest a little deeper.
+            </p>
+            <p className="mt-8 text-sm text-white/80">조금 느리게, 조금 더 오래 머물러도 괜찮아요</p>
+          </div>
+        </section>
+
+        {/* Facilities */}
+        <section id="facilities" className="px-6 py-28 lg:px-10 lg:py-40">
+          <div className="mx-auto max-w-7xl">
+            <SectionTitle en="facilities" ko="부대시설 — 모든 객실에서 무료로 이용하실 수 있습니다" />
+            <div className="mt-16 grid grid-cols-2 gap-x-4 gap-y-12 lg:grid-cols-4 lg:gap-x-6">
+              {facilities.map((f, i) => (
+                <div key={f.name} className={i % 2 === 1 ? "lg:mt-16" : ""}>
+                  <div className="group relative aspect-[3/4] overflow-hidden">
+                    <Image src={facilityImages[i]} alt={f.name} fill placeholder="blur" sizes="(min-width:1024px) 25vw, 50vw" className="object-cover transition-transform duration-1000 group-hover:scale-105" />
                   </div>
-                  <span className="text-sm font-medium text-navy">{l.time}</span>
-                </a>
+                  <p className="mt-5 font-serif text-2xl text-accent lg:text-3xl">{f.en.toLowerCase()}</p>
+                  <p className="mt-1 font-medium">{f.name}</p>
+                  <p className="mt-1 text-sm text-muted">{f.desc}</p>
+                </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Reservation */}
+        <section id="reservation" className="bg-sand px-6 py-28 lg:px-10 lg:py-40">
+          <div className="mx-auto max-w-7xl">
+            <SectionTitle en="reservation" ko="예약 — 날짜와 인원을 선택해 주세요" />
+            <div className="mt-14">
+              <BookingBar />
+            </div>
+            <dl className="mt-16 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-ink/20 pt-10 sm:grid-cols-3 lg:grid-cols-6">
+              {stayInfo.map((s) => (
+                <div key={s.name}>
+                  <dt className="text-xs text-muted">{s.name}</dt>
+                  <dd className="mt-2 text-lg font-medium tabular-nums lg:text-xl">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* Notice + FAQ */}
+        <section className="px-6 py-28 lg:px-10 lg:py-40">
+          <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2">
+            <div>
+              <div className="flex items-end justify-between">
+                <SectionTitle en="notice" ko="공지사항" />
+                <Link href="/notices" className="pb-8 font-serif text-xl text-accent underline-offset-4 hover:underline">
+                  view all
+                </Link>
+              </div>
+              <div className="mt-12">
+                <NoticeList limit={4} />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-end justify-between">
+                <SectionTitle en="faq" ko="자주 묻는 질문" />
+                <Link href="/faq" className="pb-8 font-serif text-xl text-accent underline-offset-4 hover:underline">
+                  view all
+                </Link>
+              </div>
+              <div className="mt-12">
+                <FaqList limit={4} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Location */}
+        <section id="location" className="grid lg:grid-cols-2">
+          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[640px]">
+            <Image src={img.heroCabin} alt="숲속의 목조 캐빈" fill placeholder="blur" sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" />
+          </div>
+          <div className="flex flex-col justify-center bg-ink px-6 py-20 text-white lg:px-16">
+            <h2 className="font-serif text-6xl leading-[0.85] text-accent sm:text-8xl">location</h2>
+            <p className="mt-4 text-sm text-white/60">오시는 길</p>
+            <ul className="mt-12 space-y-5 text-sm text-white/85">
+              <li className="flex gap-4">
+                <Icon name="pin" className="h-5 w-5 shrink-0 text-accent" />
+                <span>○○도 ○○군 ○○면 숲속길 19</span>
+              </li>
+              <li className="flex gap-4">
+                <Icon name="phone" className="h-5 w-5 shrink-0 text-accent" />
+                <span>000-0000-0000 (10:00 – 19:00)</span>
+              </li>
+              <li className="flex gap-4">
+                <Icon name="clock" className="h-5 w-5 shrink-0 text-accent" />
+                <span>서울에서 자동차로 약 2시간 · ○○터미널에서 택시 15분</span>
+              </li>
+            </ul>
+            <a href="#" className="mt-12 w-fit border-b border-accent pb-1 font-serif text-2xl text-accent hover:text-white">
+              open in map
+            </a>
           </div>
         </section>
       </main>

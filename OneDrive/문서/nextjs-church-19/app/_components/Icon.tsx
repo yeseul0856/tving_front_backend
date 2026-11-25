@@ -16,6 +16,11 @@ const paths: Record<string, React.ReactNode> = {
   chevL: <path d="M15 6l-6 6 6 6" />,
   chevR: <path d="M9 6l6 6-6 6" />,
   globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" /></>,
+  bed: <><path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 14h18M3 18h18" /><circle cx="6.5" cy="11" r="1.5" /></>,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="1" /><path d="M3 10h18M8 3v4M16 3v4" /></>,
+  pin: <><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></>,
+  phone: <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />,
+  area: <><path d="M4 4h16v16H4z" /><path d="M4 9h5V4M15 20v-5h5" /></>,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></>,
 };
 
